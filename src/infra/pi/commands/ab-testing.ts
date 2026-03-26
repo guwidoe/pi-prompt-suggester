@@ -9,7 +9,8 @@ import { PiSessionTranscriptProvider } from "../../pi/session-transcript-provide
 import { toInvocationThinkingLevel } from "../../../config/inference.js";
 import type { InferenceDefault, ThinkingLevel } from "../../../config/types.js";
 import type { AbWinner, SuggesterVariant } from "../suggester-variant-store.js";
-import { getModelSelectionOptions, resolveModelRef, SESSION_DEFAULT, THINKING_LEVELS } from "./shared.js";
+import { resolveModelRef, SESSION_DEFAULT, THINKING_LEVELS } from "./shared.js";
+import { showModelSelector } from "./model-selector-component.js";
 
 function summarizeVariant(variant: SuggesterVariant): string {
 	const parts: string[] = [];
@@ -47,16 +48,14 @@ async function promptVariantModel(
 	ctx: ExtensionCommandContext,
 	currentValue: string | undefined,
 ): Promise<string | undefined | null> {
-	const options = ["(inherit)", ...(await getModelSelectionOptions(ctx))];
-	const selected = await ctx.ui.select(`Suggester model (current: ${currentValue ?? "inherit"})`, options);
-	if (!selected) return undefined;
-	if (selected === "(inherit)") return null;
-	const resolved = resolveModelRef(ctx.modelRegistry.getAll(), selected);
-	if (!resolved.ok) {
-		ctx.ui.notify(resolved.reason, "error");
-		return undefined;
-	}
-	return resolved.canonicalRef;
+	const result = await showModelSelector(
+		ctx,
+		currentValue ?? "",
+		`Suggester model (current: ${currentValue ?? "inherit"})`,
+		{ prependOptions: ["(inherit)"] },
+	);
+	if (!result) return undefined;
+	return result.canonicalRef === "(inherit)" ? null : result.canonicalRef;
 }
 
 async function promptVariantThinking(
