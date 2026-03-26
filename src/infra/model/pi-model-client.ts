@@ -69,15 +69,25 @@ function preview(value: string, maxChars: number = 500): string {
 
 function extractText(content: unknown): string {
 	if (!Array.isArray(content)) return "";
-	return content
-		.map((block) => {
-			if (block && typeof block === "object" && "type" in block && (block as { type?: string }).type === "text") {
-				return String((block as { text?: unknown }).text ?? "");
-			}
-			return "";
-		})
+	
+	// First try to extract from text blocks
+	const textBlocks = content
+		.filter((block) => block && typeof block === "object" && "type" in block && (block as { type?: string }).type === "text")
+		.map((block) => String((block as { text?: unknown }).text ?? ""))
 		.join("\n")
 		.trim();
+	
+	if (textBlocks) return textBlocks;
+	
+	// Fall back to thinking blocks when no text blocks are present
+	// This handles reasoning models that may return only thinking content
+	const thinkingBlocks = content
+		.filter((block) => block && typeof block === "object" && "type" in block && (block as { type?: string }).type === "thinking")
+		.map((block) => String((block as { thinking?: unknown }).thinking ?? ""))
+		.join("\n")
+		.trim();
+	
+	return thinkingBlocks;
 }
 
 function isTranscriptSuggestionContext(context: SuggestionModelContext): context is TranscriptSuggestionPromptContext {
