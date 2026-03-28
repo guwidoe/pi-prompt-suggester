@@ -505,7 +505,18 @@ export class PiModelClient implements ModelClient {
 		}
 
 		const model = this.resolveModelForCall(ctx.model, settings?.modelRef, ctx.modelRegistry.getAll());
-		const apiKey = await ctx.modelRegistry.getApiKey(model);
+		// Support both old (getApiKey) and new (getApiKeyAndHeaders) ModelRegistry API.
+		// pi-coding-agent >= newer versions replaced getApiKey() with getApiKeyAndHeaders().
+		let apiKey: string | undefined;
+		if (typeof (ctx.modelRegistry as any).getApiKeyAndHeaders === "function") {
+			const authResult = await (ctx.modelRegistry as any).getApiKeyAndHeaders(model);
+			if (!authResult?.ok || !authResult.apiKey) {
+				throw new Error(`No API key for model ${model.provider ?? "unknown"} (prompt-suggester)`);
+			}
+			apiKey = authResult.apiKey;
+		} else {
+			apiKey = await ctx.modelRegistry.getApiKey(model);
+		}
 		const messages = typeof messagesOrPrompt === "string"
 			? [{ role: "user", content: [{ type: "text", text: messagesOrPrompt }], timestamp: Date.now() } satisfies UserMessage]
 			: messagesOrPrompt;
