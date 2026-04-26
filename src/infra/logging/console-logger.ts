@@ -1,6 +1,7 @@
 import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
 import type { EventLog } from "../../app/ports/event-log.js";
 import type { Logger } from "../../app/ports/logger.js";
+import { isStaleExtensionContextError } from "../pi/stale-context.js";
 
 type Level = "debug" | "info" | "warn" | "error";
 
@@ -67,8 +68,14 @@ export class ConsoleLogger implements Logger {
 		const payload = meta && Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : "";
 		const line = truncate(`[suggester ${level}] ${message}${payload}`, 220);
 		const statusLine = truncate(`[suggester ${level}] ${message}`, 120);
-		const ctx = this.options.getContext?.();
-		this.options.setWidgetLogStatus?.(level === "warn" || level === "error" ? { level, text: statusLine } : undefined);
+		let ctx: ExtensionContext | undefined;
+		try {
+			ctx = this.options.getContext?.();
+			this.options.setWidgetLogStatus?.(level === "warn" || level === "error" ? { level, text: statusLine } : undefined);
+		} catch (error) {
+			if (!isStaleExtensionContextError(error)) throw error;
+			return;
+		}
 		if (ctx?.hasUI && !this.options.setWidgetLogStatus) {
 			const theme = ctx.ui.theme;
 			const colorized =

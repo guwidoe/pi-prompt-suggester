@@ -22,6 +22,12 @@ export class RuntimeRef {
 		this.currentContext = ctx;
 	}
 
+	public clearContext(ctx?: ExtensionContext): void {
+		if (!ctx || this.currentContext === ctx) {
+			this.currentContext = undefined;
+		}
+	}
+
 	public getContext(): ExtensionContext | undefined {
 		return this.currentContext;
 	}

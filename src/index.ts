@@ -126,6 +126,11 @@ export default function suggester(pi: ExtensionAPI) {
 			composition.runtimeRef.setLastTurnContext(historicalTurn);
 			await composition.orchestrators.agentEnd.handle(historicalTurn, generationId);
 		},
+		onSessionShutdown: async (ctx) => {
+			const composition = await getComposition();
+			composition.orchestrators.reseedRunner.cancelPending();
+			composition.runtimeRef.clearContext(ctx);
+		},
 		onAgentEnd: async (turn, ctx) => {
 			if (!turn) return;
 			const composition = await setRuntimeContext(ctx);

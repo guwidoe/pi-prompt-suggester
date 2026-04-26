@@ -4,6 +4,7 @@ import type { SuggestionSink } from "../../app/orchestrators/turn-end.js";
 import type { SuggestionUsageStats } from "../../domain/state.js";
 import { formatTokens } from "./display.js";
 import { getSuggestionStatusText, usesGhostEditor, usesWidgetSuggestion } from "./suggestion-display-mode.js";
+import { isStaleExtensionContextError } from "./stale-context.js";
 import type { UiContextLike } from "./ui-context.js";
 
 export const WIDGET_ACCEPT_SHORTCUT_LABEL = "F2 accepts";
@@ -32,8 +33,14 @@ function formatPanelLog(
 }
 
 export function refreshSuggesterUi(runtime: UiContextLike): void {
-	const ctx = runtime.getContext();
-	if (!ctx?.hasUI) return;
+	let ctx: ExtensionContext | undefined;
+	try {
+		ctx = runtime.getContext();
+		if (!ctx?.hasUI) return;
+	} catch (error) {
+		if (isStaleExtensionContextError(error)) return;
+		throw error;
+	}
 
 	ctx.ui.setStatus("suggester", undefined);
 	ctx.ui.setStatus("suggester-events", undefined);

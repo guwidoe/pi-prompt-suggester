@@ -11,9 +11,11 @@ import type {
 } from "@mariozechner/pi-coding-agent";
 import type { TurnContext } from "../../domain/suggestion.js";
 import { buildTurnContext } from "../../app/services/conversation-signals.js";
+import { ignoreStaleExtensionContextAsync } from "./stale-context.js";
 
 export interface ExtensionWiring {
 	onSessionStart: (ctx: ExtensionContext) => Promise<void>;
+	onSessionShutdown: (ctx: ExtensionContext) => Promise<void>;
 	onAgentEnd: (turn: ReturnType<typeof buildTurnContext>, ctx: ExtensionContext) => Promise<void>;
 	onUserSubmit: (event: InputEvent, ctx: ExtensionContext) => Promise<void>;
 	onReseedCommand: (ctx: ExtensionCommandContext) => Promise<void>;
@@ -82,43 +84,48 @@ export class PiExtensionAdapter {
 
 	public register(): void {
 		this.pi.on("session_start", async (_event: SessionStartEvent, ctx) => {
-			await handleSessionEvent(ctx, this.wiring.onSessionStart);
+			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
 		});
 		this.pi.on("session_tree", async (_event: SessionTreeEvent, ctx) => {
-			await handleSessionEvent(ctx, this.wiring.onSessionStart);
+			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
 		});
 		this.pi.on("session_fork", async (_event: SessionForkEvent, ctx) => {
-			await handleSessionEvent(ctx, this.wiring.onSessionStart);
+			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
 		});
 		this.pi.on("session_switch", async (_event: SessionSwitchEvent, ctx) => {
-			await handleSessionEvent(ctx, this.wiring.onSessionStart);
+			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
+		});
+		this.pi.on("session_shutdown", async (_event, ctx) => {
+			await ignoreStaleExtensionContextAsync(() => this.wiring.onSessionShutdown(ctx));
 		});
 
 		this.pi.on("agent_end", async (event: AgentEndEvent, ctx) => {
-			const branchEntries = ctx.sessionManager.getBranch();
-			const branchMessages = branchEntries
-				.filter((entry): entry is typeof branchEntries[number] & { type: "message" } => entry.type === "message")
-				.map((entry) => entry.message);
-			const sourceLeafId = ctx.sessionManager.getLeafId() ?? `turn-${Date.now()}`;
-			const turn = buildTurnContext({
-				turnId: sourceLeafId,
-				sourceLeafId,
-				messagesFromPrompt: event.messages,
-				branchMessages,
-				occurredAt: new Date().toISOString(),
-			});
-			if (turn) {
-				await this.wiring.onAgentEnd(turn, ctx);
-				return;
-			}
+			await ignoreStaleExtensionContextAsync(async () => {
+				const branchEntries = ctx.sessionManager.getBranch();
+				const branchMessages = branchEntries
+					.filter((entry): entry is typeof branchEntries[number] & { type: "message" } => entry.type === "message")
+					.map((entry) => entry.message);
+				const sourceLeafId = ctx.sessionManager.getLeafId() ?? `turn-${Date.now()}`;
+				const turn = buildTurnContext({
+					turnId: sourceLeafId,
+					sourceLeafId,
+					messagesFromPrompt: event.messages,
+					branchMessages,
+					occurredAt: new Date().toISOString(),
+				});
+				if (turn) {
+					await this.wiring.onAgentEnd(turn, ctx);
+					return;
+				}
 
-			if (event.messages.length === 0) {
-				await this.wiring.onAgentEnd(buildAbortedFallbackTurn(sourceLeafId, branchMessages), ctx);
-			}
+				if (event.messages.length === 0) {
+					await this.wiring.onAgentEnd(buildAbortedFallbackTurn(sourceLeafId, branchMessages), ctx);
+				}
+			});
 		});
 
 		this.pi.on("input", async (event: InputEvent, ctx) => {
-			await this.wiring.onUserSubmit(event, ctx);
+			await ignoreStaleExtensionContextAsync(() => this.wiring.onUserSubmit(event, ctx));
 			return { action: "continue" };
 		});
 
