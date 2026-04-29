@@ -33,15 +33,17 @@ function formatPanelLog(
 }
 
 export function refreshSuggesterUi(runtime: UiContextLike): void {
-	let ctx: ExtensionContext | undefined;
 	try {
-		ctx = runtime.getContext();
+		const ctx = runtime.getContext();
 		if (!ctx?.hasUI) return;
+		refreshSuggesterUiForContext(ctx, runtime);
 	} catch (error) {
 		if (isStaleExtensionContextError(error)) return;
 		throw error;
 	}
+}
 
+function refreshSuggesterUiForContext(ctx: ExtensionContext, runtime: UiContextLike): void {
 	ctx.ui.setStatus("suggester", undefined);
 	ctx.ui.setStatus("suggester-events", undefined);
 	ctx.ui.setStatus("suggester-usage", undefined);

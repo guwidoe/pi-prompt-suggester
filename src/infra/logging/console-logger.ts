@@ -68,25 +68,24 @@ export class ConsoleLogger implements Logger {
 		const payload = meta && Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : "";
 		const line = truncate(`[suggester ${level}] ${message}${payload}`, 220);
 		const statusLine = truncate(`[suggester ${level}] ${message}`, 120);
-		let ctx: ExtensionContext | undefined;
 		try {
-			ctx = this.options.getContext?.();
+			const ctx = this.options.getContext?.();
 			this.options.setWidgetLogStatus?.(level === "warn" || level === "error" ? { level, text: statusLine } : undefined);
+			if (ctx?.hasUI && !this.options.setWidgetLogStatus) {
+				const theme = ctx.ui.theme;
+				const colorized =
+					level === "error"
+						? theme.fg("error", statusLine)
+						: level === "warn"
+							? theme.fg("warning", statusLine)
+							: level === "debug"
+								? theme.fg("dim", statusLine)
+								: theme.fg("muted", statusLine);
+				ctx.ui.setStatus(this.statusKey, colorized);
+				return;
+			}
 		} catch (error) {
 			if (!isStaleExtensionContextError(error)) throw error;
-			return;
-		}
-		if (ctx?.hasUI && !this.options.setWidgetLogStatus) {
-			const theme = ctx.ui.theme;
-			const colorized =
-				level === "error"
-					? theme.fg("error", statusLine)
-					: level === "warn"
-						? theme.fg("warning", statusLine)
-						: level === "debug"
-							? theme.fg("dim", statusLine)
-							: theme.fg("muted", statusLine);
-			ctx.ui.setStatus(this.statusKey, colorized);
 			return;
 		}
 

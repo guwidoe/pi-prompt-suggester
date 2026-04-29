@@ -48,7 +48,8 @@ export interface ReseedRunnerDeps {
 
 export class ReseedRunner {
 	private running = false;
-	private pendingTrigger: ReseedTrigger | null = null;
+	private runningEpoch: number | null = null;
+	private pendingTrigger: { epoch: number; trigger: ReseedTrigger } | null = null;
 	private consecutiveFailureCount = 0;
 	private cancellationEpoch = 0;
 	private readonly cwd: string;
@@ -71,13 +72,18 @@ export class ReseedRunner {
 	public async trigger(trigger: ReseedTrigger): Promise<void> {
 		if (!this.deps.config.reseed.enabled) return;
 		const epoch = this.cancellationEpoch;
-		if (this.running) {
-			this.pendingTrigger = this.mergeTriggers(this.pendingTrigger, trigger);
+		if (this.running && this.runningEpoch === epoch) {
+			const pendingTrigger = this.pendingTrigger?.epoch === epoch ? this.pendingTrigger.trigger : null;
+			this.pendingTrigger = {
+				epoch,
+				trigger: this.mergeTriggers(pendingTrigger, trigger),
+			};
 			this.deps.logger.info("reseed.pending", { reason: trigger.reason, changedFiles: trigger.changedFiles });
 			return;
 		}
 
 		this.running = true;
+		this.runningEpoch = epoch;
 		void this.deps.taskQueue
 			.enqueue("suggester:reseed", async () => {
 				await this.processTriggerLoop(trigger, epoch);
@@ -88,7 +94,10 @@ export class ReseedRunner {
 				});
 			})
 			.finally(() => {
-				this.running = false;
+				if (this.runningEpoch === epoch) {
+					this.running = false;
+					this.runningEpoch = null;
+				}
 			});
 	}
 
@@ -155,8 +164,8 @@ export class ReseedRunner {
 				}
 			}
 
-			if (this.pendingTrigger) {
-				nextTrigger = this.pendingTrigger;
+			if (!this.isCancelled(epoch) && this.pendingTrigger?.epoch === epoch) {
+				nextTrigger = this.pendingTrigger.trigger;
 				this.pendingTrigger = null;
 			}
 		}
