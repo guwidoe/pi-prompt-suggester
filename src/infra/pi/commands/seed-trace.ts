@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { AppComposition } from "../../../composition/root.js";
 import { renderSeedTrace } from "./rendering.js";
 import { parsePositiveInt } from "./shared.js";

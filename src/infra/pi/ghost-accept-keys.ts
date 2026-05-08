@@ -1,4 +1,4 @@
-import { Key, matchesKey } from "@mariozechner/pi-tui";
+import { Key, matchesKey } from "@earendil-works/pi-tui";
 import type { GhostAcceptKey } from "../../config/types.js";
 
 export const DEFAULT_GHOST_ACCEPT_KEYS: readonly GhostAcceptKey[] = ["space"];

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { PiModelClient } from "../../../dist/infra/model/pi-model-client.js";
-import { registerApiProvider, unregisterApiProviders } from "../../../node_modules/@mariozechner/pi-ai/dist/api-registry.js";
+import { registerApiProvider, unregisterApiProviders } from "../../../node_modules/@earendil-works/pi-ai/dist/api-registry.js";
 
 const CLAUDE_BRIDGE_STREAM_SIMPLE_KEY = Symbol.for("claude-bridge:activeStreamSimple");
 

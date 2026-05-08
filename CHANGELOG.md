@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+## 0.3.9 - 2026-05-08
+
+### Fixed
+- Updated pi core imports and peer dependencies to the new `@earendil-works/*` package scope and adjusted session lifecycle handling for current pi releases.
+
 ## 0.3.8 - 2026-04-20
 
 ### Added

@@ -1,4 +1,4 @@
-import type { SessionEntry } from "@mariozechner/pi-coding-agent";
+import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 import type { RuntimeState, SuggestionUsageStats } from "../../domain/state.js";
 import type { SuggestionUsage } from "../../domain/suggestion.js";
 

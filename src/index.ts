@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionContext, InputEvent } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, InputEvent } from "@earendil-works/pi-coding-agent";
 import { createAppComposition, type AppComposition } from "./composition/root.js";
 import { buildLatestHistoricalTurnContext } from "./app/services/conversation-signals.js";
 import { PiExtensionAdapter } from "./infra/pi/extension-adapter.js";

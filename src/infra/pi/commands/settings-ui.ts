@@ -1,5 +1,5 @@
-import { Container, SelectList, Text } from "@mariozechner/pi-tui";
-import type { ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
+import { Container, SelectList, Text } from "@earendil-works/pi-tui";
+import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import type { GhostAcceptKey } from "../../../config/types.js";
 import type { AppComposition } from "../../../composition/root.js";
 import { SuggesterConfigPersistence } from "./config-persistence.js";

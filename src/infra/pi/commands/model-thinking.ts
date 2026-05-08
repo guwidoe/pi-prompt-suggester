@@ -1,4 +1,4 @@
-import type { ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import type { AppComposition } from "../../../composition/root.js";
 import type { PromptSuggesterConfig, ThinkingLevel } from "../../../config/types.js";
 import { SuggesterConfigPersistence } from "./config-persistence.js";

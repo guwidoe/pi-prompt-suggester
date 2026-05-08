@@ -1,4 +1,4 @@
-import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { LoggedEvent } from "../../../app/ports/event-log.js";
 import type { AppComposition } from "../../../composition/root.js";
 import type { PromptSuggesterConfig } from "../../../config/types.js";

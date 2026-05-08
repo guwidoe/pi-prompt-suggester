@@ -1,4 +1,4 @@
-import type { SessionEntry } from "@mariozechner/pi-coding-agent";
+import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 import { CURRENT_RUNTIME_STATE_VERSION, INITIAL_RUNTIME_STATE, type RuntimeState, type SuggestionUsageStats } from "../../domain/state.js";
 import type { SuggestionUsage } from "../../domain/suggestion.js";
 import { addUsageStats, cloneUsageStats, emptyUsageStats, normalizeUsageStats } from "../../domain/usage.js";

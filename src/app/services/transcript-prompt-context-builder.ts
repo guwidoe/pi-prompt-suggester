@@ -1,7 +1,7 @@
 import type { PromptSuggesterConfig } from "../../config/types.js";
 import type { SeedArtifact } from "../../domain/seed.js";
 import type { SteeringSlice } from "../../domain/steering.js";
-import type { Message } from "@mariozechner/pi-ai";
+import type { Message } from "@earendil-works/pi-ai";
 import type { SessionTranscriptProvider } from "../ports/session-transcript.js";
 
 function textFromContent(content: Message["content"]): string {

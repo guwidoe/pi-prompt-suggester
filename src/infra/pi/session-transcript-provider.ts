@@ -1,7 +1,7 @@
 import type { SessionTranscriptProvider } from "../../app/ports/session-transcript.js";
 import type { RuntimeContextProvider } from "../model/pi-model-client.js";
-import { buildSessionContext, type SessionContext, type SessionEntry } from "@mariozechner/pi-coding-agent";
-import type { Message } from "@mariozechner/pi-ai";
+import { buildSessionContext, type SessionContext, type SessionEntry } from "@earendil-works/pi-coding-agent";
+import type { Message } from "@earendil-works/pi-ai";
 
 function cloneMessages(messages: Message[]): Message[] {
 	return JSON.parse(JSON.stringify(messages)) as Message[];

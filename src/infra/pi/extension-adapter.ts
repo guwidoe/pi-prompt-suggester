@@ -4,11 +4,9 @@ import type {
 	ExtensionCommandContext,
 	ExtensionContext,
 	InputEvent,
-	SessionForkEvent,
 	SessionStartEvent,
-	SessionSwitchEvent,
 	SessionTreeEvent,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import type { TurnContext } from "../../domain/suggestion.js";
 import { buildTurnContext } from "../../app/services/conversation-signals.js";
 import { ignoreStaleExtensionContextAsync } from "./stale-context.js";
@@ -87,12 +85,6 @@ export class PiExtensionAdapter {
 			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
 		});
 		this.pi.on("session_tree", async (_event: SessionTreeEvent, ctx) => {
-			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
-		});
-		this.pi.on("session_fork", async (_event: SessionForkEvent, ctx) => {
-			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
-		});
-		this.pi.on("session_switch", async (_event: SessionSwitchEvent, ctx) => {
 			await ignoreStaleExtensionContextAsync(() => handleSessionEvent(ctx, this.wiring.onSessionStart));
 		});
 		this.pi.on("session_shutdown", async (_event, ctx) => {

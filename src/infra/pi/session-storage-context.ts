@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { SessionEntry } from "@mariozechner/pi-coding-agent";
+import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 import { ROOT_STATE_KEY, type SessionReadableManager, type SessionStorageContext } from "./session-state-types.js";
 
 export function normalizeSessionKey(value: string): string {

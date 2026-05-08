@@ -1,6 +1,6 @@
-import type { ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
-import type { Model } from "@mariozechner/pi-ai";
-import { Container, Key, matchesKey, SelectList, Spacer, Text } from "@mariozechner/pi-tui";
+import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
+import type { Model } from "@earendil-works/pi-ai";
+import { Container, Key, matchesKey, SelectList, Spacer, Text } from "@earendil-works/pi-tui";
 
 export interface ModelSelectorSpecialOption {
 	value: string;

@@ -1,6 +1,6 @@
 {
   "name": "@guwidoe/pi-prompt-suggester",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "type": "module",
   "description": "Intent-aware next-prompt suggestion extension for pi",
   "license": "MIT",
@@ -40,14 +40,16 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@mariozechner/pi-agent-core": "*",
-    "@mariozechner/pi-ai": "*",
-    "@mariozechner/pi-coding-agent": "*"
+    "@earendil-works/pi-agent-core": "*",
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
-    "@mariozechner/pi-agent-core": "*",
-    "@mariozechner/pi-ai": "*",
-    "@mariozechner/pi-coding-agent": "*",
+    "@earendil-works/pi-agent-core": "*",
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
     "@types/node": "^24.3.0",
     "typescript": "^5.7.3"
   }

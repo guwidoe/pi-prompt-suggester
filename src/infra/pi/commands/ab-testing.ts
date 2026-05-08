@@ -1,5 +1,5 @@
-import type { ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
-import { SelectList, wrapTextWithAnsi } from "@mariozechner/pi-tui";
+import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
+import { SelectList, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 import type { AppComposition } from "../../../composition/root.js";
 import { PromptContextBuilder } from "../../../app/services/prompt-context-builder.js";
 import { TranscriptPromptContextBuilder } from "../../../app/services/transcript-prompt-context-builder.js";

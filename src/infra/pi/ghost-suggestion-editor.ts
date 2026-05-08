@@ -1,5 +1,5 @@
-import { CustomEditor } from "@mariozechner/pi-coding-agent";
-import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@mariozechner/pi-tui";
+import { CustomEditor } from "@earendil-works/pi-coding-agent";
+import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 import type { GhostAcceptKey } from "../../config/types.js";
 import { matchesGhostAcceptKey } from "./ghost-accept-keys.js";
 import type { EditorHistoryState } from "./runtime-ref.js";

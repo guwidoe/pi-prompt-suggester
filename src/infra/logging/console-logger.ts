@@ -1,4 +1,4 @@
-import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { EventLog } from "../../app/ports/event-log.js";
 import type { Logger } from "../../app/ports/logger.js";
 import { isStaleExtensionContextError } from "../pi/stale-context.js";

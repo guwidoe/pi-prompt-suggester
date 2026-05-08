@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { ExtensionCommandContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import type { AppComposition } from "../../../composition/root.js";
 import { FileConfigLoader } from "../../../config/loader.js";
 import { readObjectJsonIfExists, writeJson } from "../../storage/json-file.js";
