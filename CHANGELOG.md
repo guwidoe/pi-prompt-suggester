@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+## 0.3.10 - 2026-06-02
+
 ### Changed
 - Moved prompt-suggester seed, logs, session state, variants, and project overrides out of workspace `.pi/suggester` into Pi's agent data directory, with one-time migration of legacy workspace storage.
 

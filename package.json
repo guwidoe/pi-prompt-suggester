@@ -1,6 +1,6 @@
 {
   "name": "@guwidoe/pi-prompt-suggester",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "type": "module",
   "description": "Intent-aware next-prompt suggestion extension for pi",
   "license": "MIT",
