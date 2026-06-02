@@ -43,8 +43,8 @@ The core quality lever is the prompt-generator meta prompt and the context we fe
    - provides recent examples to prompt-generator model
 
 4. **State Store**
-   - `.pi/suggester/seed.json`
-   - `.pi/suggester/state.json`
+   - `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/seed.json`
+   - `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/state.json`
 
 ---
 
@@ -175,7 +175,7 @@ No JSON schema required.
 
 ## Data contracts
 
-## `.pi/suggester/seed.json`
+## Project prompt-suggester `seed.json`
 
 ```json
 {
@@ -194,7 +194,7 @@ No JSON schema required.
 }
 ```
 
-## `.pi/suggester/state.json`
+## Project prompt-suggester `state.json`
 
 ```json
 {

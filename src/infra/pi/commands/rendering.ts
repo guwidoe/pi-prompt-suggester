@@ -5,7 +5,7 @@ import type { PromptSuggesterConfig } from "../../../config/types.js";
 import { formatTokens } from "../display.js";
 import { asString, modelToRef, summarizeInstruction } from "./shared.js";
 
-export function renderSeedTrace(events: LoggedEvent[]): string {
+export function renderSeedTrace(events: LoggedEvent[], logPath: string = "Pi user data / prompt-suggester logs"): string {
 	if (events.length === 0) {
 		return "Suggester seed trace\n- no seeder events found in persistent logs.";
 	}
@@ -35,7 +35,7 @@ export function renderSeedTrace(events: LoggedEvent[]): string {
 		"Suggester seed trace",
 		`- events shown: ${lines.length}`,
 		latestRunId ? `- latest run: ${latestRunId}` : "- latest run: (unknown)",
-		"- log file: .pi/suggester/logs/events.ndjson",
+		`- log file: ${logPath}`,
 		...lines,
 	].join("\n");
 }
@@ -46,6 +46,7 @@ export function renderStatus(
 	config: PromptSuggesterConfig,
 	ctx?: ExtensionContext,
 	activeVariantName?: string,
+	logPath: string = "Pi user data / prompt-suggester logs",
 ): string {
 	const steeringSummary = {
 		exact: state.steeringHistory.filter((event) => event.classification === "accepted_exact").length,
@@ -76,7 +77,7 @@ export function renderStatus(
 		`- models (config): seeder=${config.inference.seederModel}, suggester=${config.inference.suggesterModel}`,
 		`- thinking (config): seeder=${config.inference.seederThinking}, suggester=${config.inference.suggesterThinking}`,
 		`- ${compactUsageLine}`,
-		`- logs: .pi/suggester/logs/events.ndjson (use /suggester seed-trace)`,
+		`- logs: ${logPath} (use /suggester seed-trace)`,
 		`- last suggestion: ${state.lastSuggestion?.text ?? "(none)"}`,
 		`- steering history: exact=${steeringSummary.exact}, edited=${steeringSummary.edited}, changed=${steeringSummary.changed}`,
 	].join("\n");

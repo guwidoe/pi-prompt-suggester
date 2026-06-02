@@ -83,7 +83,7 @@ This shows:
 
 ### Logs
 Inspect:
-- `.pi/suggester/logs/events.ndjson`
+- `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/logs/events.ndjson`
 
 Relevant fields include:
 - `variantName`

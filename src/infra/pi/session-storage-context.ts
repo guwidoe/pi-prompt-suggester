@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { SessionEntry } from "@earendil-works/pi-coding-agent";
+import { projectSuggesterDir } from "../storage/suggester-paths.js";
 import { ROOT_STATE_KEY, type SessionReadableManager, type SessionStorageContext } from "./session-state-types.js";
 
 export function normalizeSessionKey(value: string): string {
@@ -13,6 +14,7 @@ export function stateFilePath(interactionDir: string, key: string): string {
 export function createSessionStorageContext(
 	cwd: string,
 	sessionManager: SessionReadableManager,
+	projectStorageDir: string = projectSuggesterDir(cwd),
 ): SessionStorageContext {
 	const sessionId = normalizeSessionKey(sessionManager.getSessionId());
 	const sessionFile = sessionManager.getSessionFile();
@@ -30,7 +32,7 @@ export function createSessionStorageContext(
 		};
 	}
 
-	const storageDir = path.join(cwd, ".pi", "suggester", "sessions", sessionId);
+	const storageDir = path.join(projectStorageDir, "sessions", sessionId);
 	return {
 		sessionId,
 		sessionFile,

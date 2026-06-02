@@ -1,8 +1,8 @@
 # Architecture Decisions (Current)
 
 ## 1) Seed is project-global; runtime behavior is session/branch-local
-- **Decision:** store seed in `.pi/suggester/seed.json`, and store interaction/runtime state in extension-owned files under `.pi/suggester/sessions/<session-id>/`, not in Pi session JSONL.
-- **Why:** project intent is repo-wide, while per-branch suggestion/steering traces should stay with the active conversation branch without contaminating or coupling to Pi’s official session storage.
+- **Decision:** store seed in `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/seed.json`, and store interaction/runtime state in extension-owned files under the same project directory's `sessions/<session-id>/`, not in Pi session JSONL or the workspace.
+- **Why:** project intent is repo-wide, while per-branch suggestion/steering traces should stay with the active conversation branch without contaminating Pi’s official session storage or polluting agent searches in the workspace.
 
 ## 2) Suggestion generation runs on `agent_end`
 - **Decision:** trigger suggestions after the full completion, not each internal tool turn.
@@ -33,11 +33,11 @@
 - **Why:** the suggestion should never be moved into another surface just to make it visible. The stock pi footer stays intact, while status/warnings can use separate status/widget UI.
 
 ## 9) Per-role model and thinking overrides are persisted in project config
-- **Decision:** `seeder` and `suggester` each support override for model and thinking level via commands, written to `.pi/suggester/config.json`.
+- **Decision:** `seeder` and `suggester` each support override for model and thinking level via commands, written to the project config under Pi's agent data directory.
 - **Why:** quality/cost tuning differs between deep seeding and fast next-prompt suggestion, and file-backed config survives restarts.
 
 ## 10) Observability is persisted to bounded NDJSON logs
-- **Decision:** log seeder and suggestion events to `.pi/suggester/logs/events.ndjson` with truncation/rotation.
+- **Decision:** log seeder and suggestion events to `logs/events.ndjson` under the project-specific prompt-suggester directory in Pi's agent data dir, with truncation/rotation.
 - **Why:** enables post-run debugging/tuning without noisy stdout.
 
 ## 11) Usage accounting is tracked per pipeline and persisted per session

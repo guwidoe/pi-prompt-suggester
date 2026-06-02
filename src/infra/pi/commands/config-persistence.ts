@@ -1,19 +1,19 @@
 import { promises as fs } from "node:fs";
-import os from "node:os";
 import path from "node:path";
-import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
+import { getAgentDir, type ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import type { AppComposition } from "../../../composition/root.js";
 import { FileConfigLoader } from "../../../config/loader.js";
 import { readObjectJsonIfExists, writeJson } from "../../storage/json-file.js";
+import { getSuggesterStoragePaths } from "../../storage/suggester-paths.js";
 import type { ConfigScope } from "./shared.js";
 import { setPathValue } from "./shared.js";
 
-export function projectOverridePath(cwd: string): string {
-	return path.join(cwd, ".pi", "suggester", "config.json");
+export function projectOverridePath(cwd: string, agentDir: string = getAgentDir()): string {
+	return getSuggesterStoragePaths(cwd, agentDir).projectConfigPath;
 }
 
-export function userOverridePath(homeDir: string = os.homedir()): string {
-	return path.join(homeDir, ".pi", "suggester", "config.json");
+export function userOverridePath(agentDir: string = getAgentDir()): string {
+	return getSuggesterStoragePaths(process.cwd(), agentDir).userConfigPath;
 }
 
 export class SuggesterConfigPersistence {

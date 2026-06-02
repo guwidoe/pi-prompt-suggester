@@ -173,6 +173,7 @@ export default function suggester(pi: ExtensionAPI) {
 						effectiveConfig,
 						ctx,
 						composition.stores.variantStore.getActiveVariantName(),
+						composition.paths.eventLogPath,
 					),
 					display: true,
 				},

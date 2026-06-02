@@ -42,7 +42,7 @@ const baseConfig = {
 
 test("variant store applies active variant overrides to effective config", async () => {
 	const dir = await mkdtemp(path.join(os.tmpdir(), "pi-suggester-variants-"));
-	const store = new SuggesterVariantStore(dir);
+	const store = new SuggesterVariantStore(dir, path.join(dir, "storage"));
 	await store.init();
 	await store.createVariant("terse");
 	await store.updateVariant("terse", {
@@ -79,9 +79,10 @@ test("variant store applies active variant overrides to effective config", async
 
 test("variant store normalizes invalid files and preserves default variant", async () => {
 	const dir = await mkdtemp(path.join(os.tmpdir(), "pi-suggester-variants-"));
-	await mkdir(path.join(dir, ".pi", "suggester"), { recursive: true });
+	const storageDir = path.join(dir, "storage");
+	await mkdir(storageDir, { recursive: true });
 	await writeFile(
-		path.join(dir, ".pi", "suggester", "variants.json"),
+		path.join(storageDir, "variants.json"),
 		JSON.stringify({
 			activeVariant: "missing",
 			variants: {
@@ -91,7 +92,7 @@ test("variant store normalizes invalid files and preserves default variant", asy
 		}),
 		"utf8",
 	);
-	const store = new SuggesterVariantStore(dir);
+	const store = new SuggesterVariantStore(dir, storageDir);
 	await store.init();
 	assert.equal(store.getActiveVariantName(), "default");
 	assert.deepEqual(store.listVariants().map((entry) => entry.name).sort(), ["custom", "default"]);
@@ -100,7 +101,7 @@ test("variant store normalizes invalid files and preserves default variant", asy
 
 test("variant stats aggregate wins, ties, and both-bad outcomes", async () => {
 	const dir = await mkdtemp(path.join(os.tmpdir(), "pi-suggester-variants-"));
-	const store = new SuggesterVariantStore(dir);
+	const store = new SuggesterVariantStore(dir, path.join(dir, "storage"));
 	await store.init();
 	await store.createVariant("a");
 	await store.createVariant("b");

@@ -27,7 +27,7 @@
 ## Phase 4: Runtime Controls
 - [x] `/suggester model ...` (per-role seeder/suggester overrides)
 - [x] `/suggester thinking ...` (per-role thinking overrides)
-- [x] Project-config-persisted overrides (`.pi/suggester/config.json`)
+- [x] Project-config-persisted overrides (stored outside the workspace under Pi's agent data directory)
 
 ## Phase 5: Observability
 - [x] Persistent NDJSON event log

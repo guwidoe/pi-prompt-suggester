@@ -13,7 +13,7 @@ export async function handleSeedTraceCommand(
 	pi.sendMessage(
 		{
 			customType: "prompt-suggester-seed-trace",
-			content: renderSeedTrace(events),
+			content: renderSeedTrace(events, composition.paths.eventLogPath),
 			display: true,
 		},
 		{ triggerTurn: false },

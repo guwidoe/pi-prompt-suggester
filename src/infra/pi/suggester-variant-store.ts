@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { InferenceDefault, PromptSuggesterConfig, SuggestionStrategy, ThinkingLevel } from "../../config/types.js";
 import { readJsonIfExists, writeJson } from "../storage/json-file.js";
+import { projectSuggesterDir } from "../storage/suggester-paths.js";
 
 export interface SuggesterVariant {
 	strategy?: SuggestionStrategy;
@@ -151,9 +152,12 @@ export class SuggesterVariantStore {
 	private readonly resultsPath: string;
 	private state: VariantFile = DEFAULT_FILE;
 
-	public constructor(private readonly cwd: string = process.cwd()) {
-		this.filePath = path.join(this.cwd, ".pi", "suggester", "variants.json");
-		this.resultsPath = path.join(this.cwd, ".pi", "suggester", "ab-results.ndjson");
+	public constructor(
+		private readonly cwd: string = process.cwd(),
+		private readonly projectStorageDir: string = projectSuggesterDir(cwd),
+	) {
+		this.filePath = path.join(this.projectStorageDir, "variants.json");
+		this.resultsPath = path.join(this.projectStorageDir, "ab-results.ndjson");
 	}
 
 	public async init(): Promise<void> {

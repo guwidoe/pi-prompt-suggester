@@ -5,6 +5,7 @@ import { addUsageStats } from "../../domain/usage.js";
 import type { SuggestionUsage } from "../../domain/suggestion.js";
 import { atomicWriteJson } from "../storage/atomic-write.js";
 import { readJsonIfExists } from "../storage/json-file.js";
+import { projectSuggesterDir } from "../storage/suggester-paths.js";
 import {
 	emptyUsagePair,
 	normalizeInteractionState,
@@ -24,6 +25,7 @@ export class SessionStateStore implements StateStore {
 	public constructor(
 		private readonly cwd: string,
 		private readonly getSessionManager: () => SessionReadableManager | undefined,
+		private readonly projectStorageDir: string = projectSuggesterDir(cwd),
 	) {}
 
 	public async load(): Promise<RuntimeState> {
@@ -81,7 +83,7 @@ export class SessionStateStore implements StateStore {
 
 	private getStorageContext(): SessionStorageContext | undefined {
 		const sessionManager = this.getSessionManager();
-		return sessionManager ? createSessionStorageContext(this.cwd, sessionManager) : undefined;
+		return sessionManager ? createSessionStorageContext(this.cwd, sessionManager, this.projectStorageDir) : undefined;
 	}
 
 	private async loadInteractionState(context: SessionStorageContext): Promise<PersistedInteractionState> {

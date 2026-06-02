@@ -8,14 +8,14 @@
 2. **Agentic reseed runner** (background, non-blocking)
 3. **Steering tracker** (session/branch-aware)
 4. **UI sink** (ghost suggestion + usage line)
-5. **Persistent observability log** (`.pi/suggester/logs/events.ndjson`)
+5. **Persistent observability log** (`${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/logs/events.ndjson`)
 
 ---
 
 ## 1) State model
 
 ### Project-global (file)
-`./.pi/suggester/seed.json`
+`${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/seed.json`
 
 Contains:
 - seed summaries (intent/objectives/constraints/principles/status)
@@ -24,7 +24,7 @@ Contains:
 - generator/prompt/config fingerprints
 
 ### Session/branch-local (extension-owned files)
-`.pi/suggester/sessions/<session-id>/...`
+`${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/sessions/<session-id>/...`
 
 Contains:
 - last shown suggestion
@@ -92,7 +92,7 @@ Behavior:
 ## 5) Observability
 
 Persistent log file:
-- `.pi/suggester/logs/events.ndjson`
+- `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/logs/events.ndjson`
 
 Logged events include:
 - seeder run start/completion/exhaustion
@@ -110,8 +110,8 @@ Inspection:
 
 - `/suggester status`
 - `/suggester reseed`
-- `/suggester model [show|set|clear] ...` (writes project override `.pi/suggester/config.json`)
-- `/suggester thinking [show|set|clear] ...` (writes project override `.pi/suggester/config.json`)
+- `/suggester model [show|set|clear] ...` (writes project override under Pi's agent data directory)
+- `/suggester thinking [show|set|clear] ...` (writes project override under Pi's agent data directory)
 - `/suggester config [show|set [project|user] <path> <value>|reset [project|user|all]]`
 - `/suggesterSettings` (interactive TUI settings menu)
 - `/suggester instruction [show|set|clear]`

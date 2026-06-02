@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { PromptSuggesterConfig } from "../config/types.js";
 import { FileConfigLoader } from "../config/loader.js";
@@ -25,6 +24,7 @@ import { RuntimeRef } from "../infra/pi/runtime-ref.js";
 import { createUiContext } from "../infra/pi/ui-context.js";
 import { SuggesterVariantStore } from "../infra/pi/suggester-variant-store.js";
 import { PiSessionTranscriptProvider } from "../infra/pi/session-transcript-provider.js";
+import { getSuggesterStoragePaths, migrateLegacyProjectStorage } from "../infra/storage/suggester-paths.js";
 
 export interface AppComposition {
 	config: PromptSuggesterConfig;
@@ -35,6 +35,7 @@ export interface AppComposition {
 		variantStore: SuggesterVariantStore;
 	};
 	eventLog: NdjsonEventLog;
+	paths: ReturnType<typeof getSuggesterStoragePaths>;
 	orchestrators: {
 		sessionStart: SessionStartOrchestrator;
 		agentEnd: TurnEndOrchestrator;
@@ -44,9 +45,11 @@ export interface AppComposition {
 }
 
 export async function createAppComposition(pi: ExtensionAPI, cwd: string = process.cwd()): Promise<AppComposition> {
+	await migrateLegacyProjectStorage(cwd);
+	const paths = getSuggesterStoragePaths(cwd);
 	const config = await new FileConfigLoader(cwd).load();
 	const runtimeRef = new RuntimeRef();
-	const variantStore = new SuggesterVariantStore(cwd);
+	const variantStore = new SuggesterVariantStore(cwd, paths.projectDir);
 	await variantStore.init();
 	const uiContext = createUiContext({
 		runtimeRef,
@@ -54,7 +57,7 @@ export async function createAppComposition(pi: ExtensionAPI, cwd: string = proce
 		variantStore,
 		getSessionThinkingLevel: () => pi.getThinkingLevel(),
 	});
-	const eventLog = new NdjsonEventLog(path.join(cwd, ".pi", "suggester", "logs", "events.ndjson"));
+	const eventLog = new NdjsonEventLog(paths.eventLogPath);
 	const logger = new ConsoleLogger(config.logging.level, {
 		getContext: () => runtimeRef.getContext(),
 		statusKey: "suggester-events",
@@ -68,8 +71,8 @@ export async function createAppComposition(pi: ExtensionAPI, cwd: string = proce
 	const taskQueue = new InMemoryTaskQueue();
 	const vcs = new GitClient(cwd);
 	const fileHash = new Sha256FileHash();
-	const seedStore = new JsonSeedStore(path.join(cwd, ".pi", "suggester", "seed.json"));
-	const stateStore = new SessionStateStore(cwd, () => runtimeRef.getContext()?.sessionManager);
+	const seedStore = new JsonSeedStore(paths.seedPath);
+	const stateStore = new SessionStateStore(cwd, () => runtimeRef.getContext()?.sessionManager, paths.projectDir);
 	const modelClient = new PiModelClient(runtimeRef, logger, cwd);
 	const clock = new SystemClock();
 	const suggestionSink = new PiSuggestionSink(uiContext);
@@ -147,6 +150,7 @@ export async function createAppComposition(pi: ExtensionAPI, cwd: string = proce
 			variantStore,
 		},
 		eventLog,
+		paths,
 		orchestrators: {
 			sessionStart,
 			agentEnd,

@@ -110,8 +110,8 @@ Single typed config object used everywhere.
 
 Sources (highest precedence last):
 1. built-in defaults (`src/config/schema.ts`)
-2. project file: `.pi/suggester/config.json`
-3. optional user file: `~/.pi/suggester/config.json`
+2. project file: `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/config.json`
+3. optional user file: `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/config.json`
 4. additional config overlays (user/project)
 
 All config is validated at startup; invalid config fails with clear messages.
@@ -294,7 +294,7 @@ Optional debug command:
 
 ---
 
-## Config example (`.pi/suggester/config.json`)
+## Config example (project prompt-suggester config)
 
 ```json
 {

@@ -118,9 +118,9 @@ Example:
 }
 ```
 
-Overrides can be stored at:
-- user: `~/.pi/suggester/config.json`
-- project: `.pi/suggester/config.json`
+Overrides are stored outside the workspace under Pi's agent data directory:
+- user: `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/config.json`
+- project: `${PI_CODING_AGENT_DIR:-~/.pi/agent}/prompt-suggester/projects/<project-key>/config.json`
 
 If you want the full config surface, see:
 - [`config/prompt-suggester.config.json`](./config/prompt-suggester.config.json)

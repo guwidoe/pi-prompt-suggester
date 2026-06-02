@@ -1,8 +1,10 @@
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { fileURLToPath } from "node:url";
 import { readJsonIfExists, writeJson } from "../infra/storage/json-file.js";
+import { getSuggesterStoragePaths, migrateLegacyProjectStorage, migrateLegacyUserConfig } from "../infra/storage/suggester-paths.js";
 import type { PromptSuggesterConfig } from "./types.js";
 import { normalizeConfig, normalizeOverrideConfig, validateConfig } from "./schema.js";
 
@@ -82,14 +84,20 @@ async function pathExists(filePath: string): Promise<boolean> {
 export class FileConfigLoader implements ConfigLoader {
 	public constructor(
 		private readonly cwd: string = process.cwd(),
+		private readonly agentDir: string = getAgentDir(),
 		private readonly homeDir: string = os.homedir(),
 	) {}
 
 	public async load(): Promise<PromptSuggesterConfig> {
+		await Promise.all([
+			migrateLegacyProjectStorage(this.cwd, this.agentDir),
+			migrateLegacyUserConfig(this.agentDir, this.homeDir),
+		]);
+		const storagePaths = getSuggesterStoragePaths(this.cwd, this.agentDir, this.homeDir);
 		const cwdDefaultPath = path.join(this.cwd, "config", "prompt-suggester.config.json");
 		const defaultPath = (await pathExists(cwdDefaultPath)) ? cwdDefaultPath : PACKAGE_DEFAULT_CONFIG_PATH;
-		const userPath = path.join(this.homeDir, ".pi", "suggester", "config.json");
-		const projectPath = path.join(this.cwd, ".pi", "suggester", "config.json");
+		const userPath = storagePaths.userConfigPath;
+		const projectPath = storagePaths.projectConfigPath;
 
 		const defaultConfig = await readRequiredConfig(defaultPath);
 		const [userConfig, projectConfig] = await Promise.all([
